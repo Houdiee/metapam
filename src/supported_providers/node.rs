@@ -38,11 +38,11 @@ impl NodeProvider {
             .collect()
     }
 
-    fn yarn_list_packages(&self, stdout: String) -> Result<HashSet<String>> {
+    fn yarn_list_packages(&self, stdout: String) -> HashSet<String> {
         todo!()
     }
 
-    fn bun_list_packages(&self, stdout: String) -> Result<HashSet<String>> {
+    fn bun_list_packages(&self, stdout: String) -> HashSet<String> {
         todo!()
     }
 }
@@ -76,21 +76,22 @@ impl Provider for NodeProvider {
         }
     }
 
-    fn update_command(&self) -> &str {
-        match self.manager {
-            NodeManager::Npm => "npm update -g",
-            NodeManager::Pnpm => "pnpm update -g",
-            NodeManager::Bun => "bun update -g",
-            NodeManager::Yarn => "yarn global upgrade",
-        }
-    }
-
     fn list_command(&self) -> &str {
         match self.manager {
             NodeManager::Npm => "npm list -g --depth=0",
             NodeManager::Pnpm => "pnpm list -g --depth=0",
             NodeManager::Bun => "bun list -g --depth=0",
             NodeManager::Yarn => "yarn global list",
+        }
+    }
+
+    fn list_packages(&self) -> Result<HashSet<String>> {
+        let stdout = self.output_command(self.list_command(), &HashSet::new())?;
+        match self.manager {
+            NodeManager::Npm => Ok(self.npm_list_packages(stdout)),
+            NodeManager::Pnpm => Ok(self.pnpm_list_packages(stdout)),
+            NodeManager::Bun => Ok(self.bun_list_packages(stdout)),
+            NodeManager::Yarn => Ok(self.yarn_list_packages(stdout)),
         }
     }
 }

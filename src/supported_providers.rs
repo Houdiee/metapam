@@ -1,9 +1,13 @@
 use crate::{
     provider::Provider,
-    supported_providers::{arch::ArchProvider, node::NodeProvider},
+    supported_providers::{
+        apt::AptProvider, arch::ArchProvider, cargo::CargoProvider, node::NodeProvider,
+    },
 };
 
+pub mod apt;
 pub mod arch;
+pub mod cargo;
 pub mod node;
 
 pub fn get_provider(name: &str) -> Option<Box<dyn Provider>> {
@@ -32,6 +36,10 @@ pub fn get_provider(name: &str) -> Option<Box<dyn Provider>> {
         "yarn" => Some(Box::new(NodeProvider {
             manager: node::NodeManager::Yarn,
         })),
+
+        "apt" => Some(Box::new(AptProvider {})),
+
+        "cargo" => Some(Box::new(CargoProvider {})),
 
         _ => None,
     }

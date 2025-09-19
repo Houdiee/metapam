@@ -8,7 +8,6 @@ pub trait Provider {
     fn get_name(&self) -> &str;
     fn install_command(&self) -> &str;
     fn uninstall_command(&self) -> &str;
-    fn update_command(&self) -> &str;
     fn list_command(&self) -> &str;
     fn activate(&self) -> Result<()> {
         config::create_new_config(self.get_name())?;
@@ -27,8 +26,8 @@ pub trait Provider {
             .collect())
     }
 
-    fn declare_packages(&self, packages: HashSet<String>) -> Result<()> {
-        if !packages.is_empty() {
+    fn declare_packages(&self, packages: &HashSet<String>) -> Result<()> {
+        if packages.is_empty() {
             return Ok(());
         }
         self.spawn_command(self.install_command(), &packages)?;
@@ -36,11 +35,11 @@ pub trait Provider {
         Ok(())
     }
 
-    fn remove_packages(&self, packages: HashSet<String>) -> Result<()> {
-        if !packages.is_empty() {
+    fn remove_packages(&self, packages: &HashSet<String>) -> Result<()> {
+        if packages.is_empty() {
             return Ok(());
         }
-        self.spawn_command(self.install_command(), &packages)?;
+        self.spawn_command(self.uninstall_command(), &packages)?;
         config::remove_packages_from_config(self.get_name(), &packages)?;
         Ok(())
     }
@@ -60,9 +59,32 @@ pub trait Provider {
 
     fn tidy(&self) -> Result<()> {
         let diff = self.diff()?;
-        self.declare_packages(diff.declared_not_installed)?;
-        self.remove_packages(diff.installed_not_declared)?;
-        Ok(())
+
+        let declared_not_installed = diff.declared_not_installed;
+        let installed_not_declared = diff.installed_not_declared;
+
+        match (
+            declared_not_installed.is_empty(),
+            installed_not_declared.is_empty(),
+        ) {
+            (true, true) => Ok(()),
+
+            (true, false) => {
+                self.remove_packages(&installed_not_declared)?;
+                Ok(())
+            }
+
+            (false, true) => {
+                self.declare_packages(&declared_not_installed)?;
+                Ok(())
+            }
+
+            (false, false) => {
+                self.declare_packages(&declared_not_installed)?;
+                self.remove_packages(&installed_not_declared)?;
+                Ok(())
+            }
+        }
     }
 
     fn spawn_command(&self, command: &str, packages: &HashSet<String>) -> Result<()> {

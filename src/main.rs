@@ -13,6 +13,8 @@ pub mod package_diff;
 pub mod provider;
 pub mod supported_providers;
 
+// TODO : fix tidy if install fails due to no args
+
 fn main() -> Result<()> {
     let cli = Cli::parse();
 
@@ -48,12 +50,12 @@ fn main() -> Result<()> {
 
                 ProviderCommands::Declare(pkg_args) => {
                     let pkgs = HashSet::from_iter(pkg_args.packages);
-                    provider.declare_packages(pkgs)?;
+                    provider.declare_packages(&pkgs)?;
                 }
 
                 ProviderCommands::Remove(pkg_args) => {
                     let pkgs = HashSet::from_iter(pkg_args.packages);
-                    provider.remove_packages(pkgs).with_context(|| {
+                    provider.remove_packages(&pkgs).with_context(|| {
                         format!("Provider `{provider_name}` not found/supported")
                     })?;
                 }

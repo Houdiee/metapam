@@ -2,6 +2,7 @@ use anyhow::{Context, Result};
 use std::{
     collections::HashSet,
     fs::{self, File},
+    io::{BufRead, BufReader, Write},
     path::PathBuf,
 };
 
@@ -66,16 +67,76 @@ pub fn get_active_providers() -> Result<HashSet<String>> {
 }
 
 pub fn add_packages_to_config(provider_name: &str, new_packages: &HashSet<String>) -> Result<()> {
-    todo!()
+    let config_path = get_provider_path(provider_name)?;
+    let current_packages = list_packages_from_config(provider_name)?;
+    let mut new_packages_to_write = new_packages
+        .iter()
+        .filter(|p| !current_packages.contains(*p))
+        .cloned()
+        .collect::<Vec<String>>();
+
+    if new_packages_to_write.is_empty() {
+        return Ok(());
+    }
+
+    new_packages_to_write.sort();
+
+    let mut file = fs::OpenOptions::new()
+        .append(true)
+        .open(&config_path)
+        .with_context(|| format!("Failed to open config for provider `{provider_name}`"))?;
+
+    for package in new_packages_to_write {
+        writeln!(file, "{}", package)
+            .with_context(|| format!("Failed to write to config for provider `{provider_name}`"))?;
+    }
+
+    Ok(())
 }
 
 pub fn remove_packages_from_config(
     provider_name: &str,
     packages_to_remove: &HashSet<String>,
 ) -> Result<()> {
-    todo!()
+    let config_path = get_provider_path(provider_name)?;
+    let current_packages = list_packages_from_config(provider_name)?;
+    let remaining_packages = current_packages
+        .into_iter()
+        .filter(|p| !packages_to_remove.contains(p))
+        .collect::<Vec<String>>();
+
+    let mut file = fs::OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .open(&config_path)
+        .with_context(|| format!("Failed to open config for provider `{provider_name}`"))?;
+
+    for package in remaining_packages {
+        writeln!(file, "{}", package)
+            .with_context(|| format!("Failed to write to config for provider `{provider_name}`"))?;
+    }
+
+    Ok(())
 }
 
 pub fn list_packages_from_config(provider_name: &str) -> Result<HashSet<String>> {
-    todo!()
+    let file = open_config(provider_name)?;
+    let reader = BufReader::new(file);
+    let mut packages = HashSet::new();
+
+    for line in reader.lines() {
+        let line = line?;
+        let trimmed_line = line.trim();
+
+        if trimmed_line.is_empty()
+            || trimmed_line.starts_with('#')
+            || trimmed_line.starts_with("//")
+        {
+            continue;
+        }
+
+        packages.insert(trimmed_line.to_string());
+    }
+
+    Ok(packages)
 }

@@ -38,14 +38,6 @@ impl Provider for ArchProvider {
         }
     }
 
-    fn update_command(&self) -> &str {
-        match self.manager {
-            ArchManager::Pacman => "sudo pacman -Syu",
-            ArchManager::Paru => "paru -Syu",
-            ArchManager::Yay => "yay -Syu",
-        }
-    }
-
     fn list_command(&self) -> &str {
         match self.manager {
             ArchManager::Pacman => "pacman -Qqe",
