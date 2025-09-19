@@ -8,6 +8,7 @@ use crate::{
 pub mod apt;
 pub mod arch;
 pub mod cargo;
+pub mod dnf;
 pub mod node;
 
 pub fn get_provider(name: &str) -> Option<Box<dyn Provider>> {
