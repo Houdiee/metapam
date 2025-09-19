@@ -1,22 +1,21 @@
 use crate::provider::Provider;
 
-pub struct DnfProvider;
+pub struct BrewProvider;
 
-impl Provider for DnfProvider {
+impl Provider for BrewProvider {
     fn get_name(&self) -> &str {
-        "dnf"
+        "brew"
     }
 
     fn install_command(&self) -> &str {
-        "sudo dnf install"
+        "brew install"
     }
 
     fn uninstall_command(&self) -> &str {
-        "sudo dnf remove"
+        "brew uninstall"
     }
 
-    // TODO FIX THIS
     fn list_command(&self) -> &str {
-        "dnf list installed"
+        "brew list --formula"
     }
 }
