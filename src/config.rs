@@ -99,11 +99,24 @@ pub fn remove_packages_from_config(
     packages_to_remove: &HashSet<String>,
 ) -> Result<()> {
     let config_path = get_provider_path(provider_name)?;
-    let current_packages = list_packages_from_config(provider_name)?;
-    let remaining_packages = current_packages
-        .into_iter()
-        .filter(|p| !packages_to_remove.contains(p))
-        .collect::<Vec<String>>();
+    let file = open_config(provider_name)?;
+    let reader = BufReader::new(file);
+
+    let mut lines_to_keep = Vec::new();
+
+    for line in reader.lines() {
+        let line = line?;
+        let trimmed_line = line.trim();
+
+        if trimmed_line.starts_with('#') || trimmed_line.starts_with("//") {
+            lines_to_keep.push(line);
+            continue;
+        }
+
+        if !packages_to_remove.contains(trimmed_line) {
+            lines_to_keep.push(line);
+        }
+    }
 
     let mut file = fs::OpenOptions::new()
         .write(true)
@@ -111,8 +124,8 @@ pub fn remove_packages_from_config(
         .open(&config_path)
         .with_context(|| format!("Failed to open config for provider `{provider_name}`"))?;
 
-    for package in remaining_packages {
-        writeln!(file, "{}", package)
+    for line in lines_to_keep {
+        writeln!(file, "{}", line)
             .with_context(|| format!("Failed to write to config for provider `{provider_name}`"))?;
     }
 
