@@ -1,8 +1,8 @@
 use crate::{
     provider::Provider,
     supported_providers::{
-        apt::AptProvider, arch::ArchProvider, cargo::CargoProvider, go::GoProvider,
-        node::NodeProvider,
+        apt::AptProvider, arch::ArchProvider, cargo::CargoProvider, dotnet::DotnetProvider,
+        go::GoProvider, node::NodeProvider,
     },
 };
 
@@ -10,6 +10,7 @@ pub mod apt;
 pub mod arch;
 pub mod brew;
 pub mod cargo;
+pub mod dotnet;
 pub mod go;
 pub mod node;
 
@@ -45,6 +46,8 @@ pub fn get_provider(name: &str) -> Option<Box<dyn Provider>> {
         "cargo" => Some(Box::new(CargoProvider {})),
 
         "go" => Some(Box::new(GoProvider {})),
+
+        "dotnet" => Some(Box::new(DotnetProvider {})),
 
         _ => None,
     }
