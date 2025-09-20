@@ -32,9 +32,14 @@ impl NodeProvider {
         stdout
             .lines()
             .skip(1)
-            .filter(|line| line.contains("├──") || line.contains("└──"))
-            .filter_map(|s| s.split('@').next())
-            .map(|s| s.to_string())
+            .filter_map(|line| {
+                let start_index = line.find(|c: char| c.is_alphanumeric() || c == '@' || c == '/');
+
+                start_index.and_then(|index| {
+                    let trimmed_line = &line[index..];
+                    trimmed_line.split('@').next().map(|s| s.to_string())
+                })
+            })
             .collect()
     }
 
