@@ -31,6 +31,8 @@ If you have installed or removed packages from your system, that don't match the
 1. Install packages that are declared but not installed
 2. Remove packages that aren't declared but exist on the filesystem
 
+To tidy for all active providers, run `metapam tidy`.
+
 ## Installation/Build from source
 1. `git clone https://github.com/Houdiee/metapam.git && cd metapam`
 2. `cargo build --release`
