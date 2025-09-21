@@ -16,9 +16,14 @@ configure your global packages for a given package manager, like so in `XDG_CONF
 neovim
 vim
 # newline comments are allowed
+firefox
+opam
 // double slashes are also welcome
 cargo
 go
+
+--- doing this is not allowed ---
+cargo # a comment next to a package
 ```
 
 ### Tidy command
