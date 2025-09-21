@@ -6,6 +6,7 @@ use anyhow::{Context, Result};
 use clap::Parser;
 use std::collections::HashSet;
 
+pub mod all;
 pub mod cli;
 pub mod config;
 pub mod package_diff;
@@ -27,8 +28,13 @@ fn main() -> Result<()> {
         },
 
         Commands::Activate => {
-            supported_providers::activate_all_supported()
+            all::activate_all_supported()
                 .with_context(|| format!("Failed to activate all supported providers"))?;
+        }
+
+        Commands::Tidy => {
+            all::tidy_all_supported()
+                .with_context(|| format!("Failed to tidy all supported providers"))?;
         }
 
         Commands::Provider(args) => {

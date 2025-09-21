@@ -18,6 +18,8 @@ pub enum Commands {
     Provider(ProviderArgs),
     /// Activate all providers found in system
     Activate,
+    /// Installs/Removes packages for all providers based off declared config
+    Tidy,
 }
 
 #[derive(Subcommand)]
@@ -47,7 +49,7 @@ pub enum ProviderCommands {
     Remove(PackagesArgs),
     /// Lists all packages installed by a provider
     List,
-    /// Tidy's up system to match the declared config
+    /// Installs/Removes packages for all providers based off declared config
     Tidy,
     /// Shows the difference between installed and declared packages
     Diff,
