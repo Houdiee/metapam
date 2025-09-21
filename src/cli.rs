@@ -16,6 +16,8 @@ pub enum Commands {
     },
     /// Interact with a specific provider
     Provider(ProviderArgs),
+    /// Activate all providers found in system
+    Activate,
 }
 
 #[derive(Subcommand)]

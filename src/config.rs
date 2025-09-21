@@ -1,3 +1,4 @@
+use crate::supported_providers::get_provider;
 use anyhow::{Context, Result};
 use std::{
     collections::HashSet,
@@ -5,8 +6,6 @@ use std::{
     io::{BufRead, BufReader, Write},
     path::PathBuf,
 };
-
-use crate::supported_providers::get_provider;
 
 fn get_base_directory() -> Result<PathBuf> {
     let mut config_dir = dirs::config_dir().expect("Failed to get user's config directory");

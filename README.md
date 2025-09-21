@@ -1,9 +1,11 @@
 # Metapam - Declarative meta-package manager
 A tool to declaratively manager globally installed packages for supported package managers. Made for those who want a similar experience to the nix package manager without its restrictiveness and want things to "just work" out of the box.
-## Get Started
+## Getting Started
 The term `provider` can be used interchangeably with `package manager` in this README, but this is not the case for the cli.
 
-* Simply run `metapam provider <PROVIDER_NAME> activate`, which will create a config for all user-explicitly installed packages.
+* To get started, run `metapam activate`, which will create a configuration for each package manager in `XDG_CONFIG_DIR/metapam/`.
+
+* To create a configuration only for a specific provider run `metapam provider <PROVIDER_NAME> activate`.
 
 * To install a package and add it to the config, run `metapam provider <PROVIDER_NAME> declare <PACKAGES>`.
 * To remove a package and remove it from the config, run `metapam provider <PROVIDER_NAME> remove <PACKAGES>`.
@@ -13,7 +15,7 @@ configure your global packages for a given package manager, like so in `XDG_CONF
 ```
 neovim
 vim
-# comments are allowed
+# newline comments are allowed
 // double slashes are also welcome
 cargo
 go
@@ -31,7 +33,6 @@ If you have installed or removed packages from your system, that don't match the
    
 now you can run `metapam`
    
-
 ## Supported package managers
 
 | Provider Name| Supported |

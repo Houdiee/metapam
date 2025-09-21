@@ -1,19 +1,16 @@
-use std::collections::HashSet;
-
 use crate::{
     cli::{Cli, Commands, ListCommands, ProviderCommands},
     supported_providers::get_provider,
 };
 use anyhow::{Context, Result};
 use clap::Parser;
+use std::collections::HashSet;
 
 pub mod cli;
 pub mod config;
 pub mod package_diff;
 pub mod provider;
 pub mod supported_providers;
-
-// TODO : fix tidy if install fails due to no args
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -28,6 +25,11 @@ fn main() -> Result<()> {
                 }
             }
         },
+
+        Commands::Activate => {
+            supported_providers::activate_all_supported()
+                .with_context(|| format!("Failed to activate all supported providers"))?;
+        }
 
         Commands::Provider(args) => {
             let provider_name = args.provider;
