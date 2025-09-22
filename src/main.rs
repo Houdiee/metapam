@@ -28,32 +28,30 @@ fn main() -> Result<()> {
         },
 
         Commands::Activate => {
-            all::activate_all_supported()
-                .with_context(|| format!("Failed to activate all supported providers"))?;
+            all::activate_all_supported().with_context(|| format!("Failed to activate all supported providers"))?;
         }
 
         Commands::Tidy => {
-            all::tidy_all_supported()
-                .with_context(|| format!("Failed to tidy all supported providers"))?;
+            all::tidy_all_active().with_context(|| format!("Failed to tidy all active providers"))?;
+        }
+
+        Commands::Diff => {
+            all::diff_all_active().with_context(|| format!("Failed to show diff for all active providers"))?;
         }
 
         Commands::Provider(args) => {
             let provider_name = args.provider;
 
-            let provider = get_provider(&provider_name)
-                .with_context(|| format!("Provider `{provider_name}` not found/supported"))?;
+            let provider = get_provider(&provider_name).with_context(|| format!("Provider `{provider_name}` not found/supported"))?;
 
             match args.provider_command {
                 ProviderCommands::Activate => {
-                    provider.activate().with_context(|| {
-                        format!("Failed to activate provider `{provider_name}`")
-                    })?;
+                    provider
+                        .activate()
+                        .with_context(|| format!("Failed to activate provider `{provider_name}`"))?;
 
                     let provider_path = config::get_provider_path(&provider_name)?;
-                    println!(
-                        "Activated provider `{provider_name}` at {}",
-                        provider_path.display()
-                    );
+                    println!("Activated provider `{provider_name}` at {}", provider_path.display());
                 }
 
                 ProviderCommands::Declare(pkg_args) => {
@@ -63,30 +61,30 @@ fn main() -> Result<()> {
 
                 ProviderCommands::Remove(pkg_args) => {
                     let pkgs = HashSet::from_iter(pkg_args.packages);
-                    provider.remove_packages(&pkgs).with_context(|| {
-                        format!("Provider `{provider_name}` not found/supported")
-                    })?;
+                    provider
+                        .remove_packages(&pkgs)
+                        .with_context(|| format!("Provider `{provider_name}` not found/supported"))?;
                 }
 
                 ProviderCommands::List => {
-                    let pkgs = provider.list_packages().with_context(|| {
-                        format!("Failed to tidy/cleanup packages for provider `{provider_name}`")
-                    })?;
+                    let pkgs = provider
+                        .list_packages()
+                        .with_context(|| format!("Failed to tidy/cleanup packages for provider `{provider_name}`"))?;
                     for pkg in pkgs {
                         println!("{}", pkg);
                     }
                 }
 
                 ProviderCommands::Tidy => {
-                    provider.tidy().with_context(|| {
-                        format!("Failed to tidy/cleanup packages for provider `{provider_name}`")
-                    })?;
+                    provider
+                        .tidy()
+                        .with_context(|| format!("Failed to tidy/cleanup packages for provider `{provider_name}`"))?;
                 }
 
                 ProviderCommands::Diff => {
-                    let diff = provider.diff().with_context(|| {
-                        format!("Failed to show diff for provider `{provider_name}`")
-                    })?;
+                    let diff = provider
+                        .diff()
+                        .with_context(|| format!("Failed to show diff for provider `{provider_name}`"))?;
                     println!("{}", diff);
                 }
             };

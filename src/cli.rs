@@ -20,6 +20,8 @@ pub enum Commands {
     Activate,
     /// Installs/Removes packages for all providers based off declared config
     Tidy,
+    /// View the difference between all installed and declared packages
+    Diff,
 }
 
 #[derive(Subcommand)]

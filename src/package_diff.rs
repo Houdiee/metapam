@@ -8,14 +8,18 @@ pub struct PackageDiff {
 
 impl Display for PackageDiff {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "To be removed:")?;
-        for pkg in &self.installed_not_declared {
-            writeln!(f, "- {}", pkg)?;
+        if !&self.installed_not_declared.is_empty() {
+            writeln!(f, "To be removed:")?;
+            for pkg in &self.installed_not_declared {
+                writeln!(f, "- {}", pkg)?;
+            }
         }
 
-        writeln!(f, "To be installed:")?;
-        for pkg in &self.declared_not_installed {
-            writeln!(f, "+ {}", pkg)?;
+        if !&self.declared_not_installed.is_empty() {
+            writeln!(f, "To be installed:")?;
+            for pkg in &self.declared_not_installed {
+                writeln!(f, "+ {}", pkg)?;
+            }
         }
 
         Ok(())

@@ -7,11 +7,8 @@ use which::which;
 
 pub fn activate_all_supported() -> Result<()> {
     for supported in SUPPORTED_PROVIDERS {
-        let provider = get_provider(&supported).with_context(|| {
-            format!(
-                "The provider {supported} should be supported but has no concrete implementation"
-            )
-        })?;
+        let provider =
+            get_provider(&supported).with_context(|| format!("The provider {supported} should be supported but has no concrete implementation"))?;
 
         match which(supported) {
             Ok(_) => {
@@ -30,13 +27,26 @@ pub fn activate_all_supported() -> Result<()> {
     Ok(())
 }
 
-pub fn tidy_all_supported() -> Result<()> {
+pub fn diff_all_active() -> Result<()> {
     for supported in SUPPORTED_PROVIDERS {
-        let provider = get_provider(&supported).with_context(|| {
-            format!(
-                "The provider {supported} should be supported but has no concrete implementation"
-            )
-        })?;
+        let provider =
+            get_provider(&supported).with_context(|| format!("The provider {supported} should be supported but has no concrete implementation"))?;
+
+        if config::config_exists(provider.get_name()) {
+            let diff = provider.diff()?;
+            if !diff.installed_not_declared.is_empty() || !diff.declared_not_installed.is_empty() {
+                println!("Diff for provider `{}`", provider.get_name());
+                println!("{}", diff);
+            }
+        }
+    }
+    Ok(())
+}
+
+pub fn tidy_all_active() -> Result<()> {
+    for supported in SUPPORTED_PROVIDERS {
+        let provider =
+            get_provider(&supported).with_context(|| format!("The provider {supported} should be supported but has no concrete implementation"))?;
 
         if config::config_exists(provider.get_name()) {
             provider.tidy()?;
