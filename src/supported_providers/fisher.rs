@@ -8,14 +8,14 @@ impl Provider for FisherProvider {
     }
 
     fn install_command(&self) -> &str {
-        "fisher install"
+        "fish -c \"fisher install\""
     }
 
     fn uninstall_command(&self) -> &str {
-        "fisher remove"
+        "fish -c \"fisher remove\""
     }
 
     fn list_command(&self) -> &str {
-        "fisher list"
+        "fish -c \"fisher list\""
     }
 }

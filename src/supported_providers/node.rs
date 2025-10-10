@@ -43,16 +43,17 @@ impl NodeProvider {
             .collect()
     }
 
+    #[allow(unused)]
     fn yarn_list_packages(&self, stdout: String) -> HashSet<String> {
         todo!()
     }
 
+    #[allow(unused)]
     fn bun_list_packages(&self, stdout: String) -> HashSet<String> {
         todo!()
     }
 }
 
-#[allow(dead_code)]
 impl Provider for NodeProvider {
     fn get_name(&self) -> &str {
         match self.manager {
