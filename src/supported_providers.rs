@@ -1,25 +1,19 @@
 use crate::{
-    config,
     provider::Provider,
     supported_providers::{
-        apt::AptProvider, arch::ArchProvider, cargo::CargoProvider, dotnet::DotnetProvider,
-        go::GoProvider, node::NodeProvider,
+        apt::AptProvider, arch::ArchProvider, cargo::CargoProvider, dotnet::DotnetProvider, fisher::FisherProvider, node::NodeProvider,
     },
 };
-use anyhow::Result;
-use which::which;
 
 pub mod apt;
 pub mod arch;
 pub mod brew;
 pub mod cargo;
 pub mod dotnet;
-pub mod go;
+pub mod fisher;
 pub mod node;
 
-pub const SUPPORTED_PROVIDERS: &[&str] = &[
-    "pacman", "paru", "yay", "npm", "pnpm", "apt", "cargo", "go", "dotnet",
-];
+pub const SUPPORTED_PROVIDERS: &[&str] = &["pacman", "paru", "yay", "npm", "pnpm", "apt", "cargo", "dotnet", "fisher"];
 
 pub fn get_provider(name: &str) -> Option<Box<dyn Provider>> {
     match name {
@@ -52,9 +46,9 @@ pub fn get_provider(name: &str) -> Option<Box<dyn Provider>> {
 
         "cargo" => Some(Box::new(CargoProvider {})),
 
-        "go" => Some(Box::new(GoProvider {})),
-
         "dotnet" => Some(Box::new(DotnetProvider {})),
+
+        "fisher" => Some(Box::new(FisherProvider {})),
 
         _ => None,
     }

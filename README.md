@@ -48,11 +48,11 @@ now you can run `metapam`
 |brew|✅
 |cargo|✅
 |dotnet|✅
-|go|✅
 |npm|✅
 |pnpm|✅
 |pacman|✅
 |paru|✅
 |yay|✅
+|fisher|✅
 
 IF YOU WOULD LIKE A PACKAGE MANAGER TO BE ADDED, OPEN AN ISSUE
