@@ -1,6 +1,6 @@
 use crate::{
     cli::{Cli, Commands, ListCommands, ProviderCommands},
-    supported_providers::get_provider,
+    supported_providers::{SUPPORTED_PROVIDERS, get_provider},
 };
 use anyhow::{Context, Result};
 use clap::Parser;
@@ -18,7 +18,11 @@ fn main() -> Result<()> {
 
     match cli.command {
         Commands::List { list_command } => match list_command {
-            ListCommands::Available => {}
+            ListCommands::Available => {
+                for provider in SUPPORTED_PROVIDERS {
+                    println!("{}", provider);
+                }
+            }
             ListCommands::Active => {
                 let active = config::get_active_providers()?;
                 for provider in active {
