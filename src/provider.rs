@@ -63,10 +63,7 @@ pub trait Provider {
         let declared_not_installed = diff.declared_not_installed;
         let installed_not_declared = diff.installed_not_declared;
 
-        match (
-            declared_not_installed.is_empty(),
-            installed_not_declared.is_empty(),
-        ) {
+        match (declared_not_installed.is_empty(), installed_not_declared.is_empty()) {
             (true, true) => Ok(()),
 
             (true, false) => {
@@ -87,15 +84,19 @@ pub trait Provider {
         }
     }
 
+    fn declare_undeclared(&self) -> Result<()> {
+        let diff = self.diff()?;
+        let installed_not_declared = diff.installed_not_declared;
+        config::add_packages_to_config(self.get_name(), &installed_not_declared)?;
+        Ok(())
+    }
+
     fn spawn_command(&self, command: &str, packages: &HashSet<String>) -> Result<()> {
         let parts: Vec<&str> = command.split_whitespace().collect();
         let command_name = &parts[0];
         let command_args = &parts[1..];
 
-        let mut child = process::Command::new(command_name)
-            .args(command_args)
-            .args(packages)
-            .spawn()?;
+        let mut child = process::Command::new(command_name).args(command_args).args(packages).spawn()?;
 
         let status = child.wait()?;
         if !status.success() {
@@ -114,10 +115,7 @@ pub trait Provider {
         let command_name = &parts[0];
         let command_args = &parts[1..];
 
-        let output = process::Command::new(command_name)
-            .args(command_args)
-            .args(packages)
-            .output()?;
+        let output = process::Command::new(command_name).args(command_args).args(packages).output()?;
 
         let stdout = String::from_utf8(output.stdout)?;
         Ok(stdout)

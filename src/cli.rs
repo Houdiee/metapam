@@ -55,6 +55,8 @@ pub enum ProviderCommands {
     Tidy,
     /// Shows the difference between installed and declared packages
     Diff,
+    /// Adds undeclared packages to the provider config
+    DeclareUndeclared,
 }
 
 #[derive(Args)]

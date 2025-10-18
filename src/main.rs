@@ -91,6 +91,22 @@ fn main() -> Result<()> {
                         .with_context(|| format!("Failed to show diff for provider `{provider_name}`"))?;
                     println!("{}", diff);
                 }
+
+                ProviderCommands::DeclareUndeclared => {
+                    let diff = provider
+                        .diff()
+                        .with_context(|| format!("Failed to show diff for provider `{provider_name}`"))?;
+
+                    provider
+                        .declare_undeclared()
+                        .with_context(|| format!("Failed to declare undeclared packages for provider `{provider_name}`"))?;
+
+                    println!("Added packages:");
+                    for package in diff.declared_not_installed {
+                        println!("{}", package);
+                    }
+                    println!("To provider `{provider_name}`");
+                }
             };
         }
     }
