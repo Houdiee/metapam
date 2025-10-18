@@ -58,6 +58,15 @@ fn main() -> Result<()> {
                     println!("Activated provider `{provider_name}` at {}", provider_path.display());
                 }
 
+                ProviderCommands::Add(pkg_args) => {
+                    let pkgs = HashSet::from_iter(pkg_args.packages);
+                    provider.add(&pkgs)?;
+                    println!("Added the following packages to provider `{provider_name}`:");
+                    for pkg in pkgs {
+                        println!("{pkg}");
+                    }
+                }
+
                 ProviderCommands::Declare(pkg_args) => {
                     let pkgs = HashSet::from_iter(pkg_args.packages);
                     provider.declare_packages(&pkgs)?;
@@ -92,20 +101,19 @@ fn main() -> Result<()> {
                     println!("{}", diff);
                 }
 
-                ProviderCommands::DeclareUndeclared => {
+                ProviderCommands::AddUndeclared => {
                     let diff = provider
                         .diff()
                         .with_context(|| format!("Failed to show diff for provider `{provider_name}`"))?;
 
                     provider
-                        .declare_undeclared()
+                        .add_undeclared()
                         .with_context(|| format!("Failed to declare undeclared packages for provider `{provider_name}`"))?;
 
-                    println!("Added packages:");
+                    println!("Added the following packages to provider `{provider_name}`:");
                     for package in diff.declared_not_installed {
                         println!("{}", package);
                     }
-                    println!("To provider `{provider_name}`");
                 }
             };
         }

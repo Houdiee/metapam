@@ -26,6 +26,14 @@ pub trait Provider {
             .collect())
     }
 
+    fn add(&self, packages: &HashSet<String>) -> Result<()> {
+        if packages.is_empty() {
+            return Ok(());
+        }
+        config::add_packages_to_config(self.get_name(), &packages)?;
+        Ok(())
+    }
+
     fn declare_packages(&self, packages: &HashSet<String>) -> Result<()> {
         if packages.is_empty() {
             return Ok(());
@@ -84,7 +92,7 @@ pub trait Provider {
         }
     }
 
-    fn declare_undeclared(&self) -> Result<()> {
+    fn add_undeclared(&self) -> Result<()> {
         let diff = self.diff()?;
         let installed_not_declared = diff.installed_not_declared;
         config::add_packages_to_config(self.get_name(), &installed_not_declared)?;

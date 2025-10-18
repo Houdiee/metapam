@@ -45,6 +45,8 @@ pub struct ProviderArgs {
 pub enum ProviderCommands {
     /// Activate a provider
     Activate,
+    /// Add a package to the config without installing it
+    Add(PackagesArgs),
     /// Declare a package(s)
     Declare(PackagesArgs),
     /// Uninstall packages(s)
@@ -56,7 +58,7 @@ pub enum ProviderCommands {
     /// Shows the difference between installed and declared packages
     Diff,
     /// Adds undeclared packages to the provider config
-    DeclareUndeclared,
+    AddUndeclared,
 }
 
 #[derive(Args)]

@@ -4,18 +4,18 @@ pub struct FisherProvider;
 
 impl Provider for FisherProvider {
     fn get_name(&self) -> &str {
-        "fisher"
+        "fisher --command=fisher"
     }
 
     fn install_command(&self) -> &str {
-        "fish -c \"fisher install\""
+        "fish --command=\"fisher install\""
     }
 
     fn uninstall_command(&self) -> &str {
-        "fish -c \"fisher remove\""
+        "fish --command=\"fisher remove\""
     }
 
     fn list_command(&self) -> &str {
-        "fish -c \"fisher list\""
+        "fish --command=\"fisher list\""
     }
 }
