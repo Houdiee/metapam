@@ -1,5 +1,5 @@
 # metapam
-CLI tool to declare all packages in your system by having a dedicated file per-package manager. Each file is simply a list of packages which describe which packages should be installed/removed.
+CLI tool to declare all packages in your system by having a dedicated file per-package manager. Each file is simply a list of packages which describe which packages should be globally installed/removed.
 
 This setup allows a degree of reproducibility across different systems, since a different existing machine will install all declared packages whilst removing all redundant (un-declared) packages to match the user's configured ideal system state.
 
